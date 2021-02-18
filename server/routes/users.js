@@ -1,5 +1,6 @@
-import express from 'express';
+import * as express from 'express';
 import User from '../models/user.js';
+import Post from '../models/post.js';
 import  {v4 as uuidv4} from 'uuid';
 
 const router = express.Router();
@@ -33,19 +34,36 @@ router.post('/createUser', async (req, res) => {
         } else {
             res.send({
                 success: false,
-                message: 'username already taken, try again'
+                message: 'username already taken, try again',
             })
         }
     })
-
-
-
-
 });
 
-// router.get('/all', async (req, res) => {
-    
-// })
+router.post('/createPost/:id', async (req, res) => {
+    const { date, likes, message } = req.body;
+    const userID = req.params.id;
+    console.log('userID: ', userID);
+    let newPost;
+
+    User.find({_id: userID}, async (err, doc) => {
+        const postedByID = doc[0]._id;
+        newPost = new Post({date, likes, message, userID, postedByID});
+
+        try {
+            const resp = await newPost.save();
+            res.send({
+                success: true,
+                message: `new post created by ${userID} has been posted!`,
+                post: resp
+            })
+        } catch (error) {
+            res.send(error);
+        console.log('something went wrong - couldnt save post to database');
+        }
+    })
+
+})
 
 export default router;
 
