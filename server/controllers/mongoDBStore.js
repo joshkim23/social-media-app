@@ -160,7 +160,7 @@ export const createNewComment = async (req, res) => {
     const newComment = new Comment({postedByID, postID, message, likes});
     try {
         const newCommentFromMongo = await newComment.save();
-        Post.findByIdAndUpdate(postID, {$unshift: {comments: newCommentFromMongo._id}}, null, (err, doc) => {
+        Post.findByIdAndUpdate(postID, {$push: {comments: newCommentFromMongo._id}}, null, (err, doc) => {
             if(err) {
                 res.send({message: 'failed to post comment - maybe the post was deleted'})
             } else {
