@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-// import usersRoutes from './routes/users.js';
+import usersRoutes from './routes/users.js';
 import mongoose from 'mongoose';
 
 const app = express();
@@ -10,7 +10,7 @@ const PORT = 9000;
 app.use(bodyParser.json());
 app.use(cors());
 
-// app.use('/users', usersRoutes);
+app.use('/users', usersRoutes);
 app.get('/', (req, res) => res.send('Welcome to the server home page'));
 
 app.listen(PORT, () => console.log(`Server running on port: http://localhost${PORT}`));
