@@ -41,30 +41,31 @@ export const createNewUser = async (req, res) => {
 // handles request to create new post. finds the user who posted it, updates the posts array with the new post ID once the post is saved, sends back the new post and the updated user document
 export const createNewPost = async (req, res) => {
     const { likes, message } = req.body;
-    const userID = req.params.id;
-    console.log('userID: ', userID);
-    let newPost;
+    const postedByID = req.params.id;
+    console.log('the following user is attempting to make a post - userID: ', postedByID);
 
-    User.find({_id: userID}, async (err, doc) => {
-        const postedByUserDocument = JSON.parse(JSON.stringify(doc[0])); //NEED to do this json conversion in order to grab and edit the fields in the document!
+    const newPost = new Post({likes, message, postedByID});
 
-        const postedByID = doc[0]._id;
-        newPost = new Post({likes, message, postedByID});
+    try {
+        const postFromMongo = await newPost.save();
+        User.findByIdAndUpdate(postedByID, {$push: {posts: postFromMongo._id}}, null, (err, doc) => { //need to make options null in order for the callback function to work.
+            if(err) {
+                res.send({message: 'failed to update user with post'})
+            } else {
+                res.send({
+                    success: true,
+                    message: `new post created by ${postedByID} has been posted!`,
+                    post: postFromMongo,
+                    updatedUser: doc
+                })
+            }
+        });
+        
 
-        try {
-            const postFromMongo = await newPost.save();
-            postedByUserDocument.posts.unshift(postFromMongo._id);
-
-            res.send({
-                success: true,
-                message: `new post created by ${userID} has been posted!`,
-                post: postFromMongo,
-                updatedUser: postedByUserDocument
-            })
-
-        } catch (error) {
-            res.send(error);
+    } catch (error) {
+        res.send(error);
         console.log('something went wrong - couldnt save post to database');
-        }
-    })
+    }
 }
+
+        // const postedByUserDocument = JSON.parse(JSON.stringify(doc[0])); //NEED to do this json conversion in order to grab and edit the fields in the document!
