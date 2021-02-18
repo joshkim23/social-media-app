@@ -2,6 +2,7 @@ import User from '../models/user.js';
 import Post from '../models/post.js';
 import Comment from '../models/comment.js';
 import {v4 as uuidv4} from 'uuid';
+import { getUsernameById} from './commonFunctions.js';
 
 // handles request to create new user. Checks to see if there are any existing users with the same username as was inputted, if there is a copy then it returns a success: false and prompts the user to choose a different username. Otherwise it creates the new user document and sends it back to the UI
 export const createNewUser = async (req, res) => {
@@ -40,15 +41,52 @@ export const createNewUser = async (req, res) => {
     })
 }
 
+// grabs selective user profile data and all the posts that the user created
 export const getUser = async (req, res) => {
     const userID = req.params.id;
     User.findById(userID, (err, doc) => {
-        if(err) res.send({message: 'user doesnt exist'});
-        else res.send({
-            success: true,
-            message: 'user fetched',
-            userData: doc
-        })
+        if(err) {
+            res.send({
+                message: 'user does not exist'
+            })
+        } else {
+            const userDocument = JSON.parse(JSON.stringify(doc));
+
+            let userProfileData = {
+                _id: userDocument._id,
+                firstName: userDocument.firstName,
+                lastName: userDocument.lastName,
+                city: userDocument.city,
+                username: userDocument.username,
+                posts: null
+            }
+
+            Post.find({postedByID: userID}, (err, docs) => {
+                if(err) res.send(err);
+
+                if(docs.length !== 0) {
+                    const posts = JSON.parse(JSON.stringify(docs));
+                    const postsByUser = posts.map(doc => {
+                        return {
+                            _id: doc._id,
+                            postedByID: doc.postedByID,
+                            message: doc.postedByID,
+                            likes: doc.likes,
+                            comments: doc.comments.length
+                        }
+                    }) 
+
+                    userProfileData.posts = postsByUser;
+                } else {
+                    userProfileData.posts = [];
+                }
+                res.send({
+                    success: true,
+                    message: "successfully fetched user profile",
+                    userData: userProfileData
+                })
+            })
+        }
     })
 }
 
@@ -105,19 +143,63 @@ export const createNewComment = async (req, res) => {
     }
 }
 
+// grabs the post and all the comments. The comment document ids in the comments array of the post document are only added to know how many comments there are (size of the array), not to look up each comment id by id thats too slow. instead, grab the post id and search the comments database for the postID!! only need to search through the database ONCE for one id, instead of n number of times where n is the number of comments!!!! data structure!
 export const lookUpPost = async (req, res) => {
     const postID = req.params.postID;
 
     try {
         Post.findById(postID, (err, doc) => {
-            if(err) res.send({message: 'couldnt fetch the post - was it deleted?'});
-            else {
+            if(err) {
                 res.send({
-                    success: true,
-                    message: 'post document fetched.',
-                    post: doc
+                    success: false,
+                    message: 'couldnt fetch the post - was it deleted?',
+                    error: err
+                })
+            } else {
+                const post = JSON.parse(JSON.stringify(doc));
+                let postWithComments = {
+                    postedByID: post.postedByID,
+                    message: post.message,
+                    likes: post.likes,
+                    comments: null
+                }
+
+                // grabs all the comments on the post, looks up the usernames associated with each comma, since you're searching through the db with each iteration of the .map of the comments array, you need to add async await and all promise.all to wait to store comments until all the promises have been returned otherwise you will get an empty object for comments!!!!
+                Comment.find({postID: postID}, async (err, docs) => {
+                    if(err) {
+                        res.send(err);
+                    } 
+
+                    if(docs.length !== 0) {
+                        const commentDocuments = JSON.parse(JSON.stringify(docs));
+                        const comments = await Promise.all(commentDocuments.map(async doc => {
+                            
+                            const username = await getUsernameById(doc.postedByID)
+                            
+                            return {
+                                postedByID: doc.postedByID,
+                                postedByName: username,
+                                postID: doc.postID,
+                                message: doc.message,
+                                likes: doc.likes
+                            }
+                        }))
+
+                        postWithComments.comments = comments;
+                    } else {
+                        postWithComments.comments = [];
+                    }
+
+                    res.send({
+                        success: true,
+                        message: 'post with all comments fetched successfully!',
+                        post: postWithComments
+                    })
+
                 })
             }
+
+            
         })
     } catch (error) {
         res.send({
@@ -128,7 +210,7 @@ export const lookUpPost = async (req, res) => {
 }
 
 export const getAllPosts = async (req, res) => {
-    Post.find({}, (err, docs) => {
+    Post.find({}, async (err, docs) => {
         if(err) {
             res.send({
                 success: false,
@@ -136,17 +218,24 @@ export const getAllPosts = async (req, res) => {
             }) 
         } else {
             let posts = JSON.parse(JSON.stringify(docs));
-            const translatedPosts = posts.map((doc) => {
+            const translatedPosts = await Promise.all(posts.map(async (doc) => {
+
+                const username = await getUsernameById(doc.postedByID)
                 return {
                     _id: doc._id,
                     likes: doc.likes,
                     message: doc.message,
                     postedByID: doc.postedByID,
+                    postedBy: username,
                     createdAt: doc.createdAt,
                     comments: doc.comments.length
                 }
-            })
-            res.send(translatedPosts);
+            }))
+            res.send({
+                success: true,
+                message: 'successfully fetched all posts!',
+                posts: translatedPosts
+            });
         }
     })
 }
