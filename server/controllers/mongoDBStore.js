@@ -12,6 +12,7 @@ export const createNewUser = async (req, res) => {
     if(!username || !password) res.send({message: 'failed to save user to database'})
 
     User.find({username: username}, async (err, doc) => {    // search the user database for a matching username. If the number of docs returned that match = 0, try saving the user to the database. if it exists, send back that the user already exists.
+        // const postedByUserDocument = JSON.parse(JSON.stringify(doc[0])); //NEED to do this json conversion in order to grab and edit the fields in the document!
         if(doc.length === 0) {
             try {
                 console.log(`this is a novel username: ${username}`);
@@ -38,6 +39,18 @@ export const createNewUser = async (req, res) => {
     })
 }
 
+export const getUser = async (req, res) => {
+    const userID = req.params.id;
+    User.findById(userID, (err, doc) => {
+        if(err) res.send({message: 'user doesnt exist'});
+        else res.send({
+            success: true,
+            message: 'user fetched',
+            userData: doc
+        })
+    })
+}
+
 // handles request to create new post. finds the user who posted it, updates the posts array with the new post ID once the post is saved, sends back the new post and the updated user document
 export const createNewPost = async (req, res) => {
     const { likes, message } = req.body;
@@ -55,8 +68,7 @@ export const createNewPost = async (req, res) => {
                 res.send({
                     success: true,
                     message: `new post created by ${postedByID} has been posted!`,
-                    post: postFromMongo,
-                    updatedUser: doc
+                    post: postFromMongo
                 })
             }
         });
@@ -68,4 +80,28 @@ export const createNewPost = async (req, res) => {
     }
 }
 
-        // const postedByUserDocument = JSON.parse(JSON.stringify(doc[0])); //NEED to do this json conversion in order to grab and edit the fields in the document!
+export const lookUpPost = async (req, res) => {
+    const postID = req.params.postID;
+
+    try {
+        Post.findById(postID, (err, doc) => {
+            if(err) res.send({message: 'couldnt fetch the post - was it deleted?'});
+            else {
+                res.send({
+                    success: true,
+                    message: 'post document fetched.',
+                    post: doc
+                })
+            }
+        })
+    } catch (error) {
+        res.send({
+            success: false,
+            message: 'failed to connect to database'
+        })
+    }
+}
+
+export const getAllPosts = async (req, res) => {
+    
+}
