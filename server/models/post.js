@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema({
-    date: {type: String},
-    likes: {type: Number},
+    postedByID: {type: String},
     message: {type: String},
-    postedByID: {type: String}
+    likes: {type: Number}
+}, {
+    timestamps: true
 })
 
 const Post = mongoose.model('posts', postSchema);
