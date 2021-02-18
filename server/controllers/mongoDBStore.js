@@ -2,7 +2,7 @@ import User from '../models/user.js';
 import Post from '../models/post.js';
 import Comment from '../models/comment.js';
 import {v4 as uuidv4} from 'uuid';
-import { getUsernameById} from './commonFunctions.js';
+import { getUsernameById, reverseArrayOrderBecauseMongooseIsTrash } from './commonFunctions.js';
 
 export const authenticateAndGetUser = (req, res) => {
     const { username, password } = req.body;
@@ -105,11 +105,12 @@ export const getUser = async (req, res) => {
                             postedByID: doc.postedByID,
                             message: doc.postedByID,
                             likes: doc.likes,
-                            comments: doc.comments.length
+                            comments: doc.comments.length,
+                            createdAt: doc.createdAt
                         }
                     }) 
 
-                    userProfileData.posts = postsByUser;
+                    userProfileData.posts = reverseArrayOrderBecauseMongooseIsTrash(postsByUser);
                 } else {
                     userProfileData.posts = [];
                 }
@@ -133,7 +134,7 @@ export const createNewPost = async (req, res) => {
 
     try {
         const postFromMongo = await newPost.save();
-        User.findByIdAndUpdate(postedByID, {$push: {posts: postFromMongo._id}}, null, (err, doc) => { //need to make options null in order for the callback function to work.
+        User.findByIdAndUpdate(postedByID, {$: {posts: postFromMongo._id}}, null, (err, doc) => { //need to make options null in order for the callback function to work.
             if(err) {
                 res.send({message: 'failed to update user with post'})
             } else {
@@ -159,7 +160,7 @@ export const createNewComment = async (req, res) => {
     const newComment = new Comment({postedByID, postID, message, likes});
     try {
         const newCommentFromMongo = await newComment.save();
-        Post.findByIdAndUpdate(postID, {$push: {comments: newCommentFromMongo._id}}, null, (err, doc) => {
+        Post.findByIdAndUpdate(postID, {$unshift: {comments: newCommentFromMongo._id}}, null, (err, doc) => {
             if(err) {
                 res.send({message: 'failed to post comment - maybe the post was deleted'})
             } else {
@@ -218,7 +219,7 @@ export const lookUpPost = async (req, res) => {
                             }
                         }))
 
-                        postWithComments.comments = comments;
+                        postWithComments.comments = reverseArrayOrderBecauseMongooseIsTrash(comments);
                     } else {
                         postWithComments.comments = [];
                     }
@@ -267,7 +268,7 @@ export const getAllPosts = async (req, res) => {
             res.send({
                 success: true,
                 message: 'successfully fetched all posts!',
-                posts: translatedPosts
+                posts: reverseArrayOrderBecauseMongooseIsTrash(translatedPosts)
             });
         }
     })
