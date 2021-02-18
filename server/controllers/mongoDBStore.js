@@ -4,6 +4,39 @@ import Comment from '../models/comment.js';
 import {v4 as uuidv4} from 'uuid';
 import { getUsernameById} from './commonFunctions.js';
 
+export const authenticateAndGetUser = (req, res) => {
+    const { username, password } = req.body;
+    User.find({username: username}, (err, userDoc) => {
+        if(err) {
+            res.send({error: err});
+        } else if(userDoc.length === 0) {
+            res.send({error: 'username doesnt exist in database. create a user?'});
+        } else if(userDoc.length === 1) {
+            const user = JSON.parse(JSON.stringify(userDoc[0]));
+            if(user.password === password) {
+                res.send({
+                    success: true,
+                    message: "user authenticated. redirecting to homepage...",
+                    userData: {
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        city: user.city,
+                        username: user.username,
+                        posts: user.posts
+                    }
+                })
+            } else {
+                res.send({
+                    success: false,
+                    message: "password is incorrect. try again"
+                })
+            }
+        }
+
+    })
+}
+
+
 // handles request to create new user. Checks to see if there are any existing users with the same username as was inputted, if there is a copy then it returns a success: false and prompts the user to choose a different username. Otherwise it creates the new user document and sends it back to the UI
 export const createNewUser = async (req, res) => {
     const { firstName, lastName, city, username, password } = req.body;
@@ -41,7 +74,7 @@ export const createNewUser = async (req, res) => {
     })
 }
 
-// grabs selective user profile data and all the posts that the user created
+// grabs selective user profile data and all the posts that the user created - route for getting a user's profile page
 export const getUser = async (req, res) => {
     const userID = req.params.id;
     User.findById(userID, (err, doc) => {

@@ -1,5 +1,6 @@
 import * as express from 'express';
-import {createNewUser,
+import {authenticateAndGetUser,
+        createNewUser,
         getUser,
         createNewPost,
         lookUpPost,
@@ -7,6 +8,8 @@ import {createNewUser,
         getAllPosts } from '../controllers/mongoDBStore.js';
 
 const router = express.Router();
+
+router.post('/authenticate', authenticateAndGetUser);
 
 router.post('/createUser', createNewUser);
 
