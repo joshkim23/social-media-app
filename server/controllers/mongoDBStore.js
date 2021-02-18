@@ -134,7 +134,7 @@ export const createNewPost = async (req, res) => {
 
     try {
         const postFromMongo = await newPost.save();
-        User.findByIdAndUpdate(postedByID, {$: {posts: postFromMongo._id}}, null, (err, doc) => { //need to make options null in order for the callback function to work.
+        User.findByIdAndUpdate(postedByID, {$push: {posts: postFromMongo._id}}, null, (err, doc) => { //need to make options null in order for the callback function to work.
             if(err) {
                 res.send({message: 'failed to update user with post'})
             } else {
