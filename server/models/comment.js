@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const commentSchema = new mongoose.Schema({
     postedByID: {type: String},
+    postID: {type: String},
     message: {type: String},
     likes: {type: Number}
 }, {

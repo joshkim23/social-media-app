@@ -1,5 +1,6 @@
 import User from '../models/user.js';
 import Post from '../models/post.js';
+import Comment from '../models/comment.js';
 import {v4 as uuidv4} from 'uuid';
 
 // handles request to create new user. Checks to see if there are any existing users with the same username as was inputted, if there is a copy then it returns a success: false and prompts the user to choose a different username. Otherwise it creates the new user document and sends it back to the UI
@@ -80,6 +81,30 @@ export const createNewPost = async (req, res) => {
     }
 }
 
+export const createNewComment = async (req, res) => {
+    const postID = req.params.id;
+    const { postedByID, message, likes } = req.body;
+
+    const newComment = new Comment({postedByID, postID, message, likes});
+    try {
+        const newCommentFromMongo = await newComment.save();
+        Post.findByIdAndUpdate(postID, {$push: {comments: newCommentFromMongo._id}}, null, (err, doc) => {
+            if(err) {
+                res.send({message: 'failed to post comment - maybe the post was deleted'})
+            } else {
+                res.send({
+                    success: true,
+                    message: `comment on post id ${postID} was posted successfully!`,
+                    post: doc //sends old post...
+                })
+            }
+        })
+
+    } catch (error) {
+        res.send(error);
+    }
+}
+
 export const lookUpPost = async (req, res) => {
     const postID = req.params.postID;
 
@@ -103,5 +128,25 @@ export const lookUpPost = async (req, res) => {
 }
 
 export const getAllPosts = async (req, res) => {
-    
+    Post.find({}, (err, docs) => {
+        if(err) {
+            res.send({
+                success: false,
+                error: err
+            }) 
+        } else {
+            let posts = JSON.parse(JSON.stringify(docs));
+            const translatedPosts = posts.map((doc) => {
+                return {
+                    _id: doc._id,
+                    likes: doc.likes,
+                    message: doc.message,
+                    postedByID: doc.postedByID,
+                    createdAt: doc.createdAt,
+                    comments: doc.comments.length
+                }
+            })
+            res.send(translatedPosts);
+        }
+    })
 }
