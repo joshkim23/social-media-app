@@ -2,9 +2,10 @@
 import React, {useState, useEffect} from 'react';
 
 // Routing 
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 // api functions
+import { authenticateUser } from '../../apiCallFunctions.js';
 
 // material components
 import Avatar from '@material-ui/core/Avatar';
@@ -20,46 +21,69 @@ import Visibility from '@material-ui/icons/VisibilityOff';
 // js styling
 import { makeStyles } from '@material-ui/core/styles';
 import './SignIn.css';
+import { LinkedCamera } from '@material-ui/icons';
 
-const SignIn = () => {
-    const useStyles = makeStyles((theme) => ({
-        main: {
-            display: 'grid',
-            gridTemplateColumns: '1fr',
-            backgroundColor: '#f7f1e3',
-            justifySelf:'center',
-            alignItems: 'center',
-            minHeight: '100vh'
-        },
-        signInContainer: {
-            backgroundColor: '#fff',
-            padding: '20px 30px',
-            borderRadius: '10px',
-            display: 'grid',
-            gridTemplateColumns: '1fr',
-            width: 400,
-            justifySelf:'center',
-        },
-        formWithLabel: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-        },
-        inputLine: {
-            display: 'grid',
-            gridTemplateColumns: '1fr 10fr',
-            width: '100%',
-            alignItems: "center"
-        },
-        form: {
-            width: '100%', 
-            marginTop: theme.spacing(1),
-        },
-        submit: {
-            margin: theme.spacing(2, 0, 2),
-        },
-    }));
+const useStyles = makeStyles((theme) => ({
+    main: {
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        backgroundColor: '#f7f1e3',
+        justifySelf:'center',
+        alignItems: 'center',
+        minHeight: '100vh'
+    },
+    signInContainer: {
+        backgroundColor: '#fff',
+        padding: '20px 30px',
+        borderRadius: '10px',
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        width: 400,
+        justifySelf:'center',
+    },
+    formWithLabel: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    inputLine: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 10fr',
+        width: '100%',
+        alignItems: "center"
+    },
+    form: {
+        width: '100%', 
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        margin: theme.spacing(2, 0, 2),
+    },
+}));
+
+const SignIn = ({handleUserLogin}) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [userAuthenticated, setUserAuthenticated] = useState(false);
     const styles = useStyles();
+
+    const verifyUserLogin = async (e) => {
+        e.preventDefault();
+        const resp = await authenticateUser(username, password);
+        if(resp.success) {
+            console.log(resp);
+            setUserAuthenticated(true);
+            handleUserLogin(resp.userData)
+        } else {
+            console.log(resp);
+            alert(resp.message);
+        }
+    }
+    useEffect(() => {
+        //re renders the component if userAuthenticated value is changed, ie once the user is authenticated!
+    },[userAuthenticated])
+ 
+
 
   return (
     <div className={styles.main}>
@@ -67,9 +91,9 @@ const SignIn = () => {
             <CssBaseline />
             <div className={styles.formWithLabel}>
                 <Typography component="h1" variant="h5">
-                Sign in
+                    Sign in
                 </Typography>
-                <form className={styles.form} noValidate>
+                <form className={styles.form} onSubmit={verifyUserLogin}>
 
                     <div className={styles.inputLine}>
                         <Grid item>
@@ -77,13 +101,14 @@ const SignIn = () => {
                         </Grid>
                         <Grid item>
                             <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="username"
-                            autoFocus/>
+                                onChange={event => setUsername(event.target.value)}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="username"
+                                autoFocus/>
                         </Grid>
                     </div>
 
@@ -93,14 +118,15 @@ const SignIn = () => {
                         </Grid>
                         <Grid item>
                             <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="password"
-                            type="password"
-                            id="password"
+                                onChange={event => setPassword(event.target.value)}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="password"
+                                type="password"
+                                id="password"
                             />
                         </Grid>
                     </div>
@@ -111,9 +137,11 @@ const SignIn = () => {
                         variant="contained"
                         color="primary"
                         className={styles.submit}
+                        onClick={verifyUserLogin}
                     >
                         Sign In
                     </Button>
+                    {userAuthenticated && <Redirect to='/home' /> }
                 </form>
 
                 <Grid>Or</Grid>

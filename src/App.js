@@ -5,10 +5,13 @@ import SignIn from './components/SignIn/SignIn.js';
 import HomePage from './components/Homepage/HomePage.js';
 
 const App = () => {
+    const setLoggedInUserData = (userData) => {
+        console.log(userData);
+    }
     return (
         <Router>
             <Route path = "/" exact 
-                render = {() => <SignIn />}/>
+                render = {() => <SignIn handleUserLogin={setLoggedInUserData}/>}/>
             <Route path = "/home" 
                 render = {() => <HomePage />}/>
             
