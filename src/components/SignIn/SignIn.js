@@ -1,15 +1,26 @@
 import React from 'react';
+
+// Routing 
+import { Link } from 'react-router-dom';
+
+// api functions
+
+// material components
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import './SignIn.css';
 import { InputAdornment } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Visibility from '@material-ui/icons/VisibilityOff';
+
+// js styling
+import { makeStyles } from '@material-ui/core/styles';
+import './SignIn.css';
+
+
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -41,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center"
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
+        width: '100%', 
         marginTop: theme.spacing(1),
     },
     submit: {
@@ -111,6 +122,7 @@ const SignIn = () => {
 
                 <Button
                     variant="outlined"
+                    fullWidth
                     color="primary"
                     className={classes.submit}>
                     Create an account
