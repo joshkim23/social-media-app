@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
         width: 400,
         justifySelf:'center',
     },
-    paper: {
+    formWithLabel: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -67,7 +67,7 @@ const SignIn = () => {
     <div className={classes.main}>
         <div className={classes.signInContainer}>
             <CssBaseline />
-            <div className={classes.paper}>
+            <div className={classes.formWithLabel}>
                 <Typography component="h1" variant="h5">
                 Sign in
                 </Typography>
