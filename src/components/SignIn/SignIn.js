@@ -106,7 +106,6 @@ const SignIn = ({handleUserLogin}) => {
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="email"
                                 label="username"
                                 autoFocus/>
                         </Grid>
@@ -147,6 +146,8 @@ const SignIn = ({handleUserLogin}) => {
                 <Grid>Or</Grid>
 
                 <Button
+                    component={Link}
+                    to={'/createAccount'}
                     variant="outlined"
                     fullWidth
                     color="primary"

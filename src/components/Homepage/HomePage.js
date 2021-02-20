@@ -1,9 +1,9 @@
 import React from 'react';
 
-const HomePage = () => {
+const HomePage = ({username}) => {
     return (
         <div>
-            User authenticated, welcome to the home page!
+            User authenticated, welcome to the home page {username}!!!
         </div>
     )
 }

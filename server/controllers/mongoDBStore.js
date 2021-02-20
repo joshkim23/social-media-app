@@ -39,10 +39,11 @@ export const authenticateAndGetUser = (req, res) => {
 
 // handles request to create new user. Checks to see if there are any existing users with the same username as was inputted, if there is a copy then it returns a success: false and prompts the user to choose a different username. Otherwise it creates the new user document and sends it back to the UI
 export const createNewUser = async (req, res) => {
-    const { firstName, lastName, city, username, password } = req.body;
+    const { username, firstName, lastName, city, password } = req.body;
     const userID = `user-${uuidv4()}`
     const posts = [];
     const newUser = new User({userID, firstName, lastName, city, username, password, posts});
+    console.log(newUser);
 
     if(!username || !password) res.send({message: 'failed to save user to database'})
 
@@ -52,11 +53,17 @@ export const createNewUser = async (req, res) => {
             try {
                 console.log(`this is a novel username: ${username}`);
                 const resp = await newUser.save();
-                
+                const newUserFromMongo = JSON.parse(JSON.stringify(resp));
                 res.send({
                     success: true,
                     message: `new User profile created! Welcome ${username}`,
-                    newUser: newUser
+                    userData: {
+                        firstName: newUserFromMongo.firstName,
+                        lastName: newUserFromMongo.lastName,
+                        city: newUserFromMongo.city,
+                        username: newUserFromMongo.username,
+                        posts: newUserFromMongo.posts
+                    }
                 })
                 // res.status(201).json(newUser);
                 console.log('User saved to database!!', resp);
