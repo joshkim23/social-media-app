@@ -45,39 +45,34 @@ const Header  = ({username, signOut}) => {
         <div className={classes.root}>
             <AppBar position="static">
                 <Toolbar className={classes.horizontalStretch}>
-                  {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                      <MenuIcon />
-                  </IconButton>
-                  <Typography variant="h6" className={classes.title}>
-                      SOCIAL MEDIA APP
-                  </Typography>
-                  <Button color="inherit">Login</Button> */}
 
                   <div>
-                    <Typography variant="h6" className={classes.title}>
+                    <Typography variant="h4" className={classes.title}>
                       Social Media App
                     </Typography>
                   </div>
-                  <div>
-                  <Button style={{justifySelf: 'end'}} color="inherit" aria-label="menu" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-                    {username}
-                  </Button>
-                  <Menu
-                    id="simple-menu"
-                    anchorEl={anchorEl}
-                    getContentAnchorEl={null}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                    transformOrigin={{ vertical: "top", horizontal: "center" }}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                  >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>Account</MenuItem>
-                    <MenuItem onClick={handleClose}>App Stats</MenuItem>
-                    <MenuItem component={Link} to={'/'} onClick={handleSignOut}>Logout</MenuItem>
-                  </Menu>
+
+                  <div style={{justifySelf: 'end'}}>
+                    <Button color="inherit" aria-label="menu" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                      {username}
+                    </Button>
+                    <Menu
+                      id="simple-menu"
+                      anchorEl={anchorEl}
+                      getContentAnchorEl={null}
+                      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                      transformOrigin={{ vertical: "top", horizontal: "center" }}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={handleClose}
+                    >
+                      <MenuItem component={Link} to={`/${username}`} onClick={handleClose}>Profile</MenuItem>
+                      <MenuItem component={Link} to={`/${username}/info`} onClick={handleClose}>Account</MenuItem>
+                      <MenuItem component={Link} to={'/statistics'} onClick={handleClose}>App Stats</MenuItem>
+                      <MenuItem component={Link} to={'/'} onClick={handleSignOut}>Logout</MenuItem>
+                    </Menu>
                   </div>
+                  
                 </Toolbar>
             </AppBar>
         </div>
