@@ -103,7 +103,6 @@ export const getUser = async (req, res) => {
 
             Post.find({postedByID: userID}, (err, docs) => {
                 if(err) res.send(err);
-
                 if(docs.length !== 0) {
                     const posts = JSON.parse(JSON.stringify(docs));
                     const postsByUser = posts.map(doc => {
@@ -116,7 +115,6 @@ export const getUser = async (req, res) => {
                             createdAt: doc.createdAt
                         }
                     }) 
-
                     userProfileData.posts = reverseArrayOrderBecauseMongooseIsTrash(postsByUser);
                 } else {
                     userProfileData.posts = [];
@@ -204,19 +202,16 @@ export const lookUpPost = async (req, res) => {
                     likes: post.likes,
                     comments: null
                 }
-
                 // grabs all the comments on the post, looks up the usernames associated with each comma, since you're searching through the db with each iteration of the .map of the comments array, you need to add async await and all promise.all to wait to store comments until all the promises have been returned otherwise you will get an empty object for comments!!!!
                 Comment.find({postID: postID}, async (err, docs) => {
                     if(err) {
                         res.send(err);
                     } 
-
                     if(docs.length !== 0) {
                         const commentDocuments = JSON.parse(JSON.stringify(docs));
                         const comments = await Promise.all(commentDocuments.map(async doc => {
                             
                             const username = await getUsernameById(doc.postedByID)
-                            
                             return {
                                 postedByID: doc.postedByID,
                                 postedByName: username,
@@ -225,22 +220,17 @@ export const lookUpPost = async (req, res) => {
                                 likes: doc.likes
                             }
                         }))
-
                         postWithComments.comments = reverseArrayOrderBecauseMongooseIsTrash(comments);
                     } else {
                         postWithComments.comments = [];
                     }
-
                     res.send({
                         success: true,
                         message: 'post with all comments fetched successfully!',
                         post: postWithComments
                     })
-
                 })
             }
-
-            
         })
     } catch (error) {
         res.send({
