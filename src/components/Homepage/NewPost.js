@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
 
 
 const NewPost= ({username, handleSubmitPost}) => {
@@ -8,7 +10,10 @@ const NewPost= ({username, handleSubmitPost}) => {
     const styles = {
         mainContainer: {
             display: 'grid',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: '#fff',
+            padding: '15px',
+            borderRadius: '10px'
         }
     }
 
@@ -19,16 +24,20 @@ const NewPost= ({username, handleSubmitPost}) => {
     }
 
     return (
-        <div style={styles.mainContainer}>
+        <Box style={styles.mainContainer} boxShadow={4}>
+            <Typography variant="h5" style={{justifySelf: 'center', paddingBottom: '5px'}}>
+                Create Post
+            </Typography>
             <TextField
                 label="What's on your mind?"
                 variant="outlined"
                 onChange={event => setPost(event.target.value)}
+                style={{paddingBottom: '20px'}}
             />
-            <Button onClick={() => handleSubmit()} variant="outlined" color="primary">
-                Submit
+            <Button onClick={() => handleSubmit()} fullWidth={false} variant="outlined" color="primary">
+                Post
             </Button>
-        </div>
+        </Box>
     )
 }
 

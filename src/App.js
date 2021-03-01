@@ -21,7 +21,6 @@ const App = () => {
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
-        console.log(loggedInUser)
         if (loggedInUser) { 
             setUser(JSON.parse(loggedInUser));
             setUsername(JSON.parse(loggedInUser).username)

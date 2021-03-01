@@ -1,6 +1,7 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import UserListItem from './UserListItem.js';
+import Box from '@material-ui/core/Box'
 
 const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
 
@@ -8,10 +9,15 @@ const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
         mainContainer: {
             display: 'grid',
             gridTemplateColumns: '1fr',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            overflow: 'auto'
         },
         userContainer: {
-            margin: '5px 0px 5px'
+            margin: '2px 0px 2px'
+        },
+        usersList: {
+            display: 'grid',
+            overflow: 'auto'
         }
     }
 
@@ -25,7 +31,6 @@ const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
                 variant="outlined"
                 onChange={event => searchInputChanged(event.target.value)}
             />
-
                 {userList && userList.map((user, index) => {
                     return (
                         <div style={styles.userContainer} key={index}>
@@ -40,5 +45,4 @@ const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
         </div>
     )
 }
-
 export default UserList;

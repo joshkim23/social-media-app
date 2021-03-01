@@ -5,11 +5,13 @@ import Post from '../Post.js';
 import NewPost from './NewPost.js';
 import { getUsers, getPosts } from '../../apiCallFunctions.js';
 import { Typography } from '@material-ui/core';
+import indigo from '@material-ui/core/colors/indigo';
+import Box from '@material-ui/core/Box'
 
 const HomePage = ({username, signOut}) => {
     const styles = {
         overlay: { // need this to make the div FULL screen!!
-            backgroundColor: '#f7f1e3',
+            backgroundColor: `${indigo["50"]}`,
             position: 'fixed',
             width: '100%',
             height: '100%',
@@ -32,7 +34,7 @@ const HomePage = ({username, signOut}) => {
             display: 'grid',
             gridGap: '20px',
             borderRadius: '10px',
-            backgroundColor: '#f7f1e3',
+            backgroundColor: `${indigo["50"]}`,
             height: '890px',
             overflow: 'auto'
         },
@@ -42,14 +44,13 @@ const HomePage = ({username, signOut}) => {
         },
         postsContainer: {
             borderRadius: '10px',
-            backgroundColor: '#fff',
+            backgroundColor: `${indigo["50"]}`,
             display: 'grid',
             gridTemplateColumns: '1fr',
-            overflow: 'auto',
             padding: '15px'
         },
         post: {
-            marginBottom: '10px'
+            marginBottom: '20px'
         },
         chatBoxContainer: {
 
@@ -113,21 +114,19 @@ const HomePage = ({username, signOut}) => {
             />
 
             <div style={styles.layout}>
-                <div style={styles.content}>
+                <Box style={styles.content} boxShadow={2}>
                     <UserList 
                         userList={userList}
                         handleSearchForUser={handleUserSearch}
                         handleChatClick={handleUserChat}
                     />
-                </div>
+                </Box>
 
                 <div style={styles.postColumn}>
-                    <div style={styles.newPost}>
-                        <NewPost 
-                            username={username}
-                            handleSubmitPost={handleSubmitNewPost}
-                        />
-                    </div>
+                    <NewPost 
+                        username={username}
+                        handleSubmitPost={handleSubmitNewPost}
+                    />
 
                     <div style={styles.postsContainer}>
 
@@ -149,9 +148,9 @@ const HomePage = ({username, signOut}) => {
                     </div>
                 </div>
 
-                <div style={styles.content}>
+                <Box style={styles.content} boxShadow={2}>
                     chat box goes here
-                </div>
+                </Box>
             </div>
         </div>
     )
