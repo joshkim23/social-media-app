@@ -275,17 +275,19 @@ export const getAllUsers = async (req, res) => {
     try {
         User.find({}, (err, userDocs) => {
             if(err) {
-                console.log(err);
                 res.send({
                     success: false,
                     error: err
                 })
             } else {
-                console.log(userDocs);
                 const users = JSON.parse(JSON.stringify(userDocs));
                 const usernames = users.map(user => {
                     return {
-                        username: user.username
+                        _id: user._id,
+                        username: user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        city: user.city
                     }
                 })
     
@@ -297,8 +299,6 @@ export const getAllUsers = async (req, res) => {
             }
         })
     } catch (err) {
-        console.log(err);
         res.send(err);
-    }
-    
+    }   
 }

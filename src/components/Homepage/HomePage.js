@@ -12,9 +12,8 @@ const HomePage = ({username, signOut}) => {
             padding: '20px',
         },
         content: {
-            border: '1px solid black',
             borderRadius: '10px',
-            padding: '6px',
+            padding: '15px',
             backgroundColor: '#fff',
             minHeight: '800px'
         },

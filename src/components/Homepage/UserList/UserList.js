@@ -8,6 +8,9 @@ const UserList = ({userList, handleSearchForUser, handleProfileClick, handleChat
             display: 'grid',
             gridTemplateColumns: '1fr',
             justifyContent: 'center'
+        },
+        userContainer: {
+            margin: '5px 0px 5px'
         }
     }
 
@@ -18,15 +21,18 @@ const UserList = ({userList, handleSearchForUser, handleProfileClick, handleChat
                 variant="outlined"
             />
 
-            {userList && userList.map(user => {
-                return (
-                    <UserListItem 
-                        username = {user}
-                        handleUserProfileClick = {handleProfileClick}
-                        handleUserChatClick = {handleChatClick}
-                    />
-                )
-            })}
+                {userList && userList.map((user, index) => {
+                    return (
+                        <div style={styles.userContainer} key={index}>
+                            <UserListItem 
+                                key = {index}
+                                username = {user}
+                                handleUserProfileClick = {handleProfileClick}
+                                handleUserChatClick = {handleChatClick}
+                            />
+                        </div>
+                    )
+                })}
         </div>
     )
 }
