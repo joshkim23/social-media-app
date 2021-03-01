@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from '@material-ui/core/Button';
 
-const UserListItem = ({username, handleUserProfileClick, handleUserChatClick}) => {
+const UserListItem = ({username, handleUserChatClick}) => {
     const styles = {
         container: {
             height: '50px',

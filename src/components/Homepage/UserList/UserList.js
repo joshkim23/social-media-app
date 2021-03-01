@@ -2,7 +2,8 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import UserListItem from './UserListItem.js';
 
-const UserList = ({userList, handleSearchForUser, handleProfileClick, handleChatClick}) => {
+const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
+
     const styles = {
         mainContainer: {
             display: 'grid',
@@ -14,11 +15,15 @@ const UserList = ({userList, handleSearchForUser, handleProfileClick, handleChat
         }
     }
 
+    const searchInputChanged = (input) => handleSearchForUser(input);
+
+
     return (
         <div style={styles.mainContainer}>
             <TextField  
                 label="Search Users"
                 variant="outlined"
+                onChange={event => searchInputChanged(event.target.value)}
             />
 
                 {userList && userList.map((user, index) => {
@@ -27,7 +32,6 @@ const UserList = ({userList, handleSearchForUser, handleProfileClick, handleChat
                             <UserListItem 
                                 key = {index}
                                 username = {user}
-                                handleUserProfileClick = {handleProfileClick}
                                 handleUserChatClick = {handleChatClick}
                             />
                         </div>

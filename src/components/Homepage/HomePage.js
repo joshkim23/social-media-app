@@ -25,8 +25,8 @@ const HomePage = ({username, signOut}) => {
         }
     }
 
-    const [users, setUsers] = useState([]);
-    const [userList, setUserList] = useState([]);
+    const [users, setUsers] = useState([]); // stores all users grabbed from the database - includes general information 
+    const [userList, setUserList] = useState([]); //stores the list of usernames sent to the usersList component - changes upon search input
 
     useEffect(() => {
         getUsersFromDatabase();
@@ -35,20 +35,23 @@ const HomePage = ({username, signOut}) => {
     async function getUsersFromDatabase() {
         const resp = await getUsers();
         if (resp.success) {
+            setUsers(resp.users);
+
             const userListFromAPI = resp.users.map(user => user.username)
-            setUsers(userListFromAPI);
             setUserList(userListFromAPI);
         }
         console.log(resp);
     }
 
 
-    function handleUserSearch() {
-
-    }
-
-    function handleProfileClick(username) {
-
+    function handleUserSearch(input) {
+        if(input === '') {
+            setUserList(users.map(user => user.username));
+        } else {
+            const filteredUsers = users.filter(user => user.username.toLowerCase().slice(0, input.length) === input).map(user => user.username); //after you filter the results, it returns the whole array index for the user which includes everything from the api, not just the usernames. need to map the results to grab the usernames
+            console.log(filteredUsers);
+            setUserList(filteredUsers);
+        }
     }
 
     function handleUserChat() {
@@ -68,7 +71,6 @@ const HomePage = ({username, signOut}) => {
                     <UserList 
                         userList={userList}
                         handleSearchForUser={handleUserSearch}
-                        handleProfileClick={handleProfileClick}
                         handleChatClick={handleUserChat}
                     />
                 </div>
