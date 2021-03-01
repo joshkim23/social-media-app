@@ -39,3 +39,12 @@ export const getUsers = () => {
     .then(data => JSON.parse(JSON.stringify(data)))
     .catch(error => error);
 }
+
+export const getPosts = () => {
+    console.log('attempting to FETCH all posts in database')
+    return fetch(`${ENDPOINT}/posts/all`, {
+        method: 'GET'
+    }).then(res => res.json())
+    .then(data => JSON.parse(JSON.stringify(data)))
+    .catch(error => error);
+}

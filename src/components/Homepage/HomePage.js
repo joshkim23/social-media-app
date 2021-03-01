@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header/Header.js';
 import UserList from './UserList/UserList.js';
-import { getUsers } from '../../apiCallFunctions.js';
+import Post from '../Post.js';
+import NewPost from './NewPost.js';
+import { getUsers, getPosts } from '../../apiCallFunctions.js';
+import { Typography } from '@material-ui/core';
 
 const HomePage = ({username, signOut}) => {
     const styles = {
+        overlay: { // need this to make the div FULL screen!!
+            backgroundColor: '#f7f1e3',
+            position: 'fixed',
+            width: '100%',
+            height: '100%',
+            overflowY: 'scroll',
+        },
         layout: {
             display: 'grid',
             gridTemplateColumns: '1fr 2fr 1fr',
@@ -15,21 +25,44 @@ const HomePage = ({username, signOut}) => {
             borderRadius: '10px',
             padding: '15px',
             backgroundColor: '#fff',
-            minHeight: '800px'
+            height: '800px',
+            overflow: 'auto'
         },
-        overlay: { // need this to make the div FULL screen!!
+        postColumn: {
+            display: 'grid',
+            gridGap: '20px',
+            borderRadius: '10px',
             backgroundColor: '#f7f1e3',
-            position: 'fixed',
-            width: '100%',
-            height: '100%',
+            height: '890px',
+            overflow: 'auto'
+        },
+        newPost: {
+            backgroundColor: '#fff',
+            padding: '15px'
+        },
+        postsContainer: {
+            borderRadius: '10px',
+            backgroundColor: '#fff',
+            display: 'grid',
+            gridTemplateColumns: '1fr',
+            overflow: 'auto',
+            padding: '15px'
+        },
+        post: {
+            marginBottom: '10px'
+        },
+        chatBoxContainer: {
+
         }
     }
 
     const [users, setUsers] = useState([]); // stores all users grabbed from the database - includes general information 
     const [userList, setUserList] = useState([]); //stores the list of usernames sent to the usersList component - changes upon search input
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         getUsersFromDatabase();
+        getAllPostsFromDatabase();
     }, [])
 
     async function getUsersFromDatabase() {
@@ -44,6 +77,14 @@ const HomePage = ({username, signOut}) => {
         console.log(resp);
     }
 
+    async function getAllPostsFromDatabase() {
+        const resp = await getPosts();
+        if (resp.success) {
+            const allPostsFromDatabase = resp.posts;
+            setPosts(allPostsFromDatabase);
+        }
+        console.log(resp);
+    }
 
     function handleUserSearch(input) {
         if(input === '') {
@@ -57,6 +98,10 @@ const HomePage = ({username, signOut}) => {
 
     function handleUserChat() {
 
+    }
+
+    function handleSubmitNewPost(input) {
+        console.log('request to submit new post: ', input);
     }
 
 
@@ -76,8 +121,32 @@ const HomePage = ({username, signOut}) => {
                     />
                 </div>
 
-                <div style={styles.content}>
-                    create new post and existing posts go here
+                <div style={styles.postColumn}>
+                    <div style={styles.newPost}>
+                        <NewPost 
+                            username={username}
+                            handleSubmitPost={handleSubmitNewPost}
+                        />
+                    </div>
+
+                    <div style={styles.postsContainer}>
+
+                        {posts.map((post, index) => {
+                            return (
+                                <div style={styles.post} key={index}>
+                                    <Post 
+                                        key={index}
+                                        username={post.postedBy}
+                                        message={post.message}
+                                        likes={post.likes}
+                                        comments={post.comments}
+                                        date={post.createdAt} 
+                                    />
+                                </div>
+                            )
+                        })}
+
+                    </div>
                 </div>
 
                 <div style={styles.content}>
