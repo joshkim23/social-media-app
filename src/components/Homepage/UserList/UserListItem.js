@@ -8,7 +8,7 @@ const UserListItem = ({username, handleUserChatClick}) => {
     const styles = {
         container: {
             height: '50px',
-            border: '1px solid black',
+            // border: '1px solid black',
             borderRadius: '5px',
             display: 'grid',
             alignItems: 'center',
