@@ -9,6 +9,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,9 +54,11 @@ const Header  = ({username, signOut}) => {
                     </Typography>
                   </div>
 
-                  <div style={{justifySelf: 'end'}}>
-                    <Button color="inherit" aria-label="menu" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                  <div style={{justifySelf: 'end', alignContent: 'center'}}>
+                    <Button style={{textTransform: 'none'}} color="inherit" aria-label="menu" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                      <AccountCircle style={{marginRight: '2px'}}/>
                       {username}
+                      <ArrowDropDownIcon style={{marginLeft: '8px'}}/>
                     </Button>
                     <Menu
                       id="simple-menu"

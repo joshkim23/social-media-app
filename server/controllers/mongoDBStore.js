@@ -270,3 +270,35 @@ export const getAllPosts = async (req, res) => {
         }
     })
 }
+
+export const getAllUsers = async (req, res) => {
+    try {
+        User.find({}, (err, userDocs) => {
+            if(err) {
+                res.send({
+                    success: false,
+                    error: err
+                })
+            } else {
+                const users = JSON.parse(JSON.stringify(userDocs));
+                const usernames = users.map(user => {
+                    return {
+                        _id: user._id,
+                        username: user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        city: user.city
+                    }
+                })
+    
+                res.send({
+                    success: true,
+                    message: 'successfully fetched all users in database',
+                    users: usernames
+                })
+            }
+        })
+    } catch (err) {
+        res.send(err);
+    }   
+}

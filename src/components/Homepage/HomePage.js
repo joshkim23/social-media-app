@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header/Header.js';
+import UserList from './UserList/UserList.js';
+import { getUsers } from '../../apiCallFunctions.js';
 
 const HomePage = ({username, signOut}) => {
     const styles = {
@@ -10,11 +12,10 @@ const HomePage = ({username, signOut}) => {
             padding: '20px',
         },
         content: {
-            border: '1px solid black',
             borderRadius: '10px',
-            padding: '6px',
+            padding: '15px',
             backgroundColor: '#fff',
-            height: '500px'
+            minHeight: '800px'
         },
         overlay: { // need this to make the div FULL screen!!
             backgroundColor: '#f7f1e3',
@@ -23,6 +24,42 @@ const HomePage = ({username, signOut}) => {
             height: '100%',
         }
     }
+
+    const [users, setUsers] = useState([]); // stores all users grabbed from the database - includes general information 
+    const [userList, setUserList] = useState([]); //stores the list of usernames sent to the usersList component - changes upon search input
+
+    useEffect(() => {
+        getUsersFromDatabase();
+    }, [])
+
+    async function getUsersFromDatabase() {
+        const resp = await getUsers();
+        if (resp.success) {
+            const usersWithoutLoggedInUser = resp.users.filter(user => user.username !== username);
+            setUsers(usersWithoutLoggedInUser);
+
+            const usernameList = usersWithoutLoggedInUser.map(user => user.username)
+            setUserList(usernameList);
+        }
+        console.log(resp);
+    }
+
+
+    function handleUserSearch(input) {
+        if(input === '') {
+            setUserList(users.map(user => user.username));
+        } else {
+            const filteredUsers = users.filter(user => user.username.toLowerCase().slice(0, input.length) === input).map(user => user.username); //after you filter the results, it returns the whole array index for the user which includes everything from the api, not just the usernames. need to map the results to grab the usernames
+            console.log(filteredUsers);
+            setUserList(filteredUsers);
+        }
+    }
+
+    function handleUserChat() {
+
+    }
+
+
     return (
         <div style={styles.overlay}>
             <Header 
@@ -32,7 +69,11 @@ const HomePage = ({username, signOut}) => {
 
             <div style={styles.layout}>
                 <div style={styles.content}>
-                    Users List goes here
+                    <UserList 
+                        userList={userList}
+                        handleSearchForUser={handleUserSearch}
+                        handleChatClick={handleUserChat}
+                    />
                 </div>
 
                 <div style={styles.content}>
