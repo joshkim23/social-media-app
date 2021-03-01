@@ -18,6 +18,7 @@ export const authenticateAndGetUser = (req, res) => {
                     success: true,
                     message: "user authenticated. redirecting to homepage...",
                     userData: {
+                        _id: user._id,
                         firstName: user.firstName,
                         lastName: user.lastName,
                         city: user.city,
@@ -131,13 +132,18 @@ export const getUser = async (req, res) => {
 
 // handles request to create new post. finds the user who posted it, updates the posts array with the new post ID once the post is saved, sends back the new post and the updated user document
 export const createNewPost = async (req, res) => {
-    const { likes, message } = req.body;
-    const postedByID = req.params.id;
+    const { message, postedByID } = req.body;
+    const likes = 0;
     console.log('the following user is attempting to make a post - userID: ', postedByID);
-
-    const newPost = new Post({likes, message, postedByID});
-
+    
+    if(!postedByID) {
+        res.send({
+            success: false,
+            message: 'no user ID sent to api'
+        })
+    }
     try {
+        const newPost = new Post({likes, message, postedByID});
         const postFromMongo = await newPost.save();
         User.findByIdAndUpdate(postedByID, {$push: {posts: postFromMongo._id}}, null, (err, doc) => { //need to make options null in order for the callback function to work.
             if(err) {

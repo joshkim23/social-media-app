@@ -48,3 +48,19 @@ export const getPosts = () => {
     .then(data => JSON.parse(JSON.stringify(data)))
     .catch(error => error);
 }
+
+export const submitPost = (message, loggedInUserID) => {
+    console.log(`attempting to CREATE a new post with id: ${loggedInUserID} and message: ${message}`)
+    return fetch(`${ENDPOINT}/createPost`, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: message,
+            postedByID: loggedInUserID
+        })
+    }).then(res => res.json())
+    .then(data => JSON.parse(JSON.stringify(data)))
+    .catch(error => error);
+}

@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 
 
-const NewPost= ({username, handleSubmitPost}) => {
+const NewPost= ({username, firstName, handleSubmitPost}) => {
     const [post, setPost] = useState('');
     const styles = {
         mainContainer: {
@@ -20,6 +20,7 @@ const NewPost= ({username, handleSubmitPost}) => {
     function handleSubmit() {
         if(post) {
             handleSubmitPost(post)
+            setPost('');
         }
     }
 
@@ -29,12 +30,13 @@ const NewPost= ({username, handleSubmitPost}) => {
                 Create Post
             </Typography>
             <TextField
-                label="What's on your mind?"
+                label={`What's on your mind, ${firstName}?`}
                 variant="outlined"
+                value={post? post: ''}
                 onChange={event => setPost(event.target.value)}
                 style={{paddingBottom: '20px'}}
             />
-            <Button onClick={() => handleSubmit()} fullWidth={false} variant="outlined" color="primary">
+            <Button onClick={() => handleSubmit()} fullWidth={false} variant="contained" color="primary" disabled={post === ''}>
                 Post
             </Button>
         </Box>

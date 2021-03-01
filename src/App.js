@@ -9,10 +9,14 @@ import CreateAccountForm from './components/CreateAccountForm.js';
 const App = () => {
     const [username, setUsername] = useState('');
     const [user, setUser] = useState({});
+    const [firstName, setFirstName] = useState('');
+    const [loggedInUserID, setLoggedInUserID] = useState('');
 
     const setLoggedInUserData = (userData) => {
         console.log(userData);
         setUsername(userData.username);
+        setFirstName(userData.firstName);
+        setLoggedInUserID(userData._id);
         
         if(!localStorage.getItem('user')) {
             localStorage.setItem('user', JSON.stringify(userData));
@@ -21,9 +25,12 @@ const App = () => {
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
+        console.log(JSON.parse(loggedInUser));
         if (loggedInUser) { 
             setUser(JSON.parse(loggedInUser));
-            setUsername(JSON.parse(loggedInUser).username)
+            setUsername(JSON.parse(loggedInUser).username);
+            setFirstName(JSON.parse(loggedInUser).firstName);
+            setLoggedInUserID(JSON.parse(loggedInUser)._id)
             // setUserLookUp(JSON.parse(loggedInUser));
         } 
     },[]);
@@ -31,6 +38,7 @@ const App = () => {
     const handleSignOut = () => {
         localStorage.clear();
         setUsername('');
+        setFirstName('');
     }
 
     return (
@@ -41,6 +49,8 @@ const App = () => {
             <Route path = "/home" 
                 render = {() => <HomePage 
                                     username={username}
+                                    loggedInUserID={loggedInUserID}
+                                    firstName={firstName}
                                     signOut={handleSignOut}
                                 />
                 }/>

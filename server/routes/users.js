@@ -16,7 +16,7 @@ router.post('/createUser', createNewUser);
 
 router.get('/lookupUser/:id', getUser);
 
-router.post('/createPost/:id', createNewPost);
+router.post('/createPost', createNewPost);
 
 router.get('/post/:postID', lookUpPost);
 
