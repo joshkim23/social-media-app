@@ -3,12 +3,12 @@ import Header from './Header/Header.js';
 import UserList from './UserList/UserList.js';
 import Post from '../Post.js';
 import NewPost from './NewPost.js';
-import { getUsers, getPosts } from '../../apiCallFunctions.js';
+import { getUsers, getPosts, submitPost } from '../../apiCallFunctions.js';
 import { Typography } from '@material-ui/core';
 import indigo from '@material-ui/core/colors/indigo';
 import Box from '@material-ui/core/Box'
 
-const HomePage = ({username, signOut}) => {
+const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
     const styles = {
         overlay: { // need this to make the div FULL screen!!
             backgroundColor: `${indigo["50"]}`,
@@ -28,6 +28,7 @@ const HomePage = ({username, signOut}) => {
             padding: '15px',
             backgroundColor: '#fff',
             height: '800px',
+            // height: '100%%',
             overflow: 'auto'
         },
         postColumn: {
@@ -36,6 +37,8 @@ const HomePage = ({username, signOut}) => {
             borderRadius: '10px',
             backgroundColor: `${indigo["50"]}`,
             height: '890px',
+            // height: '100%%',
+
             overflow: 'auto'
         },
         newPost: {
@@ -101,8 +104,16 @@ const HomePage = ({username, signOut}) => {
 
     }
 
-    function handleSubmitNewPost(input) {
-        console.log('request to submit new post: ', input);
+    async function handleSubmitNewPost(input) {
+        try {
+            const resp = await submitPost(input, loggedInUserID)
+            if(resp.success) {
+                getAllPostsFromDatabase();
+            } 
+            console.log(resp);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
 
@@ -125,6 +136,7 @@ const HomePage = ({username, signOut}) => {
                 <div style={styles.postColumn}>
                     <NewPost 
                         username={username}
+                        firstName={firstName}
                         handleSubmitPost={handleSubmitNewPost}
                     />
 

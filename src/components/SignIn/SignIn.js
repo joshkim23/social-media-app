@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import { InputAdornment } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Visibility from '@material-ui/icons/VisibilityOff';
+import indigo from '@material-ui/core/colors/indigo';
 
 // js styling
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     main: {
         display: 'grid',
         gridTemplateColumns: '1fr',
-        backgroundColor: '#f7f1e3',
+        backgroundColor: `${indigo["50"]}`,
         justifySelf:'center',
         alignItems: 'center',
         minHeight: '100vh'

@@ -1,7 +1,8 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import UserListItem from './UserListItem.js';
-import Box from '@material-ui/core/Box'
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography'
 
 const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
 
@@ -26,8 +27,11 @@ const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
 
     return (
         <div style={styles.mainContainer}>
+            <Typography variant="h6" style={{paddingBottom:'5px'}}>
+                User List
+            </Typography>
             <TextField  
-                label="Search Users"
+                label="Search"
                 variant="outlined"
                 onChange={event => searchInputChanged(event.target.value)}
             />

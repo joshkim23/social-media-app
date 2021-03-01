@@ -5,6 +5,8 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { formatDateTime } from '../utility/dateTimeFormatter.js';
 import grey from '@material-ui/core/colors/grey';
+import indigo from '@material-ui/core/colors/indigo';
+
 import Typography from '@material-ui/core/Typography';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import CommentIcon from '@material-ui/icons/Comment';
@@ -31,7 +33,8 @@ const Post = ({ username, message, likes, comments, date }) => {
         },
         likesAndComments: {
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr'
+            gridTemplateColumns: '1fr 1fr',
+            color: `${grey["600"]}`
         },
         buttons: {
             display: 'grid',
@@ -44,13 +47,13 @@ const Post = ({ username, message, likes, comments, date }) => {
     return (
         <Box style={styles.mainContainer} boxShadow={2}>
             <div style={styles.usernameAndDate}>
-                <Typography style={{color: `${grey["600"]}`, display: 'flex', fontSize: '14px', alignItems: 'center'}}>
-                    <AccountCircle style={{paddingRight: '5px', color: 'primary'}} />
-                    <div>
+                <Typography style={{color: 'black', display: 'flex', fontSize: '14px', alignItems: 'center'}}>
+                    <AccountCircle style={{paddingRight: '0px', color: `${indigo["200"]}`}} />
+                    <Button component={Link} to={`/${username}`} style={{textDecoration: 'underline', textTransform: 'none'}}>
                         {username}
-                    </div>
+                    </Button>
                 </Typography>
-                <Typography style={{justifySelf: 'end', fontSize: '11px'}}>
+                <Typography style={{justifySelf: 'end', fontSize: '11px', color: `${grey["600"]}`}}>
                     {formatDateTime(date)}
                 </Typography>
             </div>
