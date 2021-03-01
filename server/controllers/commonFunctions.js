@@ -13,3 +13,16 @@ export const getUsernameById = async (id) => {
     console.log(`found username for the user with id: ${id}: ${user.username}`);
     return user.username;
 }
+
+export const reverseArrayOrderBecauseMongooseIsTrash = (array) => {
+    let left = null;
+    let right = null;
+    let length = array.length;
+
+    for(left = 0, right = length-1; left < right; left +=1, right -= 1) {
+        let temporary = array[left]; //stores the temporary far left value into the far right index
+        array[left] = array[right]; //flip the location of the far left with far right
+        array[right] = temporary; //increment the index, so you only need to go through half of the array. brilliant.
+    }
+    return array;
+}

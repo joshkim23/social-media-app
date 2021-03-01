@@ -2,7 +2,7 @@ import User from '../models/user.js';
 import Post from '../models/post.js';
 import Comment from '../models/comment.js';
 import {v4 as uuidv4} from 'uuid';
-import { getUsernameById} from './commonFunctions.js';
+import { getUsernameById, reverseArrayOrderBecauseMongooseIsTrash } from './commonFunctions.js';
 
 export const authenticateAndGetUser = (req, res) => {
     const { username, password } = req.body;
@@ -18,6 +18,7 @@ export const authenticateAndGetUser = (req, res) => {
                     success: true,
                     message: "user authenticated. redirecting to homepage...",
                     userData: {
+                        _id: user._id,
                         firstName: user.firstName,
                         lastName: user.lastName,
                         city: user.city,
@@ -39,10 +40,11 @@ export const authenticateAndGetUser = (req, res) => {
 
 // handles request to create new user. Checks to see if there are any existing users with the same username as was inputted, if there is a copy then it returns a success: false and prompts the user to choose a different username. Otherwise it creates the new user document and sends it back to the UI
 export const createNewUser = async (req, res) => {
-    const { firstName, lastName, city, username, password } = req.body;
+    const { username, firstName, lastName, city, password } = req.body;
     const userID = `user-${uuidv4()}`
     const posts = [];
     const newUser = new User({userID, firstName, lastName, city, username, password, posts});
+    console.log(newUser);
 
     if(!username || !password) res.send({message: 'failed to save user to database'})
 
@@ -52,11 +54,17 @@ export const createNewUser = async (req, res) => {
             try {
                 console.log(`this is a novel username: ${username}`);
                 const resp = await newUser.save();
-                
+                const newUserFromMongo = JSON.parse(JSON.stringify(resp));
                 res.send({
                     success: true,
                     message: `new User profile created! Welcome ${username}`,
-                    newUser: newUser
+                    userData: {
+                        firstName: newUserFromMongo.firstName,
+                        lastName: newUserFromMongo.lastName,
+                        city: newUserFromMongo.city,
+                        username: newUserFromMongo.username,
+                        posts: newUserFromMongo.posts
+                    }
                 })
                 // res.status(201).json(newUser);
                 console.log('User saved to database!!', resp);
@@ -96,7 +104,6 @@ export const getUser = async (req, res) => {
 
             Post.find({postedByID: userID}, (err, docs) => {
                 if(err) res.send(err);
-
                 if(docs.length !== 0) {
                     const posts = JSON.parse(JSON.stringify(docs));
                     const postsByUser = posts.map(doc => {
@@ -105,11 +112,11 @@ export const getUser = async (req, res) => {
                             postedByID: doc.postedByID,
                             message: doc.postedByID,
                             likes: doc.likes,
-                            comments: doc.comments.length
+                            comments: doc.comments.length,
+                            createdAt: doc.createdAt
                         }
                     }) 
-
-                    userProfileData.posts = postsByUser;
+                    userProfileData.posts = reverseArrayOrderBecauseMongooseIsTrash(postsByUser);
                 } else {
                     userProfileData.posts = [];
                 }
@@ -125,13 +132,18 @@ export const getUser = async (req, res) => {
 
 // handles request to create new post. finds the user who posted it, updates the posts array with the new post ID once the post is saved, sends back the new post and the updated user document
 export const createNewPost = async (req, res) => {
-    const { likes, message } = req.body;
-    const postedByID = req.params.id;
+    const { message, postedByID } = req.body;
+    const likes = 0;
     console.log('the following user is attempting to make a post - userID: ', postedByID);
-
-    const newPost = new Post({likes, message, postedByID});
-
+    
+    if(!postedByID) {
+        res.send({
+            success: false,
+            message: 'no user ID sent to api'
+        })
+    }
     try {
+        const newPost = new Post({likes, message, postedByID});
         const postFromMongo = await newPost.save();
         User.findByIdAndUpdate(postedByID, {$push: {posts: postFromMongo._id}}, null, (err, doc) => { //need to make options null in order for the callback function to work.
             if(err) {
@@ -196,19 +208,16 @@ export const lookUpPost = async (req, res) => {
                     likes: post.likes,
                     comments: null
                 }
-
                 // grabs all the comments on the post, looks up the usernames associated with each comma, since you're searching through the db with each iteration of the .map of the comments array, you need to add async await and all promise.all to wait to store comments until all the promises have been returned otherwise you will get an empty object for comments!!!!
                 Comment.find({postID: postID}, async (err, docs) => {
                     if(err) {
                         res.send(err);
                     } 
-
                     if(docs.length !== 0) {
                         const commentDocuments = JSON.parse(JSON.stringify(docs));
                         const comments = await Promise.all(commentDocuments.map(async doc => {
                             
                             const username = await getUsernameById(doc.postedByID)
-                            
                             return {
                                 postedByID: doc.postedByID,
                                 postedByName: username,
@@ -217,22 +226,17 @@ export const lookUpPost = async (req, res) => {
                                 likes: doc.likes
                             }
                         }))
-
-                        postWithComments.comments = comments;
+                        postWithComments.comments = reverseArrayOrderBecauseMongooseIsTrash(comments);
                     } else {
                         postWithComments.comments = [];
                     }
-
                     res.send({
                         success: true,
                         message: 'post with all comments fetched successfully!',
                         post: postWithComments
                     })
-
                 })
             }
-
-            
         })
     } catch (error) {
         res.send({
@@ -267,8 +271,40 @@ export const getAllPosts = async (req, res) => {
             res.send({
                 success: true,
                 message: 'successfully fetched all posts!',
-                posts: translatedPosts
+                posts: reverseArrayOrderBecauseMongooseIsTrash(translatedPosts)
             });
         }
     })
+}
+
+export const getAllUsers = async (req, res) => {
+    try {
+        User.find({}, (err, userDocs) => {
+            if(err) {
+                res.send({
+                    success: false,
+                    error: err
+                })
+            } else {
+                const users = JSON.parse(JSON.stringify(userDocs));
+                const usernames = users.map(user => {
+                    return {
+                        _id: user._id,
+                        username: user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        city: user.city
+                    }
+                })
+    
+                res.send({
+                    success: true,
+                    message: 'successfully fetched all users in database',
+                    users: usernames
+                })
+            }
+        })
+    } catch (err) {
+        res.send(err);
+    }   
 }

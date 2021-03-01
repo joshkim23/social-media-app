@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import usersRoutes from './routes/users.js';
 import mongoose from 'mongoose';
-
+import dotenv from 'dotenv';
 const app = express();
 const PORT = 9000;
 
@@ -16,7 +16,8 @@ app.get('/', (req, res) => res.send('Welcome to the server home page'));
 app.listen(PORT, () => console.log(`Server running on port: http://localhost${PORT}`));
 
 //uri format: const uri = "mongodb+srv://<username>:<password>@time-tracker-app-cluste.ig4sy.mongodb.net/<dbname>?retryWrites=true&w=majority";
-const uri = 'mongodb+srv://joshkim23:paradise@time-tracker-app-cluste.ig4sy.mongodb.net/SocialMediaApp?authSource=admin&replicaSet=atlas-wkx1fx-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true'
+dotenv.config();
+const uri = process.env.ATLAS_URI;
 const connectionParams = {
     useNewUrlParser: true,
     useCreateIndex: true,
