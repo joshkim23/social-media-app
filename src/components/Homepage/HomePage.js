@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header/Header.js';
+import UserList from './UserList/UserList.js';
+import { getUsers } from '../../apiCallFunctions.js';
 
 const HomePage = ({username, signOut}) => {
     const styles = {
@@ -14,7 +16,7 @@ const HomePage = ({username, signOut}) => {
             borderRadius: '10px',
             padding: '6px',
             backgroundColor: '#fff',
-            height: '500px'
+            minHeight: '800px'
         },
         overlay: { // need this to make the div FULL screen!!
             backgroundColor: '#f7f1e3',
@@ -23,6 +25,38 @@ const HomePage = ({username, signOut}) => {
             height: '100%',
         }
     }
+
+    const [users, setUsers] = useState([]);
+    const [userList, setUserList] = useState([]);
+
+    useEffect(() => {
+        getUsersFromDatabase();
+    }, [])
+
+    async function getUsersFromDatabase() {
+        const resp = await getUsers();
+        if (resp.success) {
+            const userListFromAPI = resp.users.map(user => user.username)
+            setUsers(userListFromAPI);
+            setUserList(userListFromAPI);
+        }
+        console.log(resp);
+    }
+
+
+    function handleUserSearch() {
+
+    }
+
+    function handleProfileClick(username) {
+
+    }
+
+    function handleUserChat() {
+
+    }
+
+
     return (
         <div style={styles.overlay}>
             <Header 
@@ -32,7 +66,12 @@ const HomePage = ({username, signOut}) => {
 
             <div style={styles.layout}>
                 <div style={styles.content}>
-                    Users List goes here
+                    <UserList 
+                        userList={userList}
+                        handleSearchForUser={handleUserSearch}
+                        handleProfileClick={handleProfileClick}
+                        handleChatClick={handleUserChat}
+                    />
                 </div>
 
                 <div style={styles.content}>
