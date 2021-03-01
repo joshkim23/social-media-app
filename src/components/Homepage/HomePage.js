@@ -35,10 +35,11 @@ const HomePage = ({username, signOut}) => {
     async function getUsersFromDatabase() {
         const resp = await getUsers();
         if (resp.success) {
-            setUsers(resp.users);
+            const usersWithoutLoggedInUser = resp.users.filter(user => user.username !== username);
+            setUsers(usersWithoutLoggedInUser);
 
-            const userListFromAPI = resp.users.map(user => user.username)
-            setUserList(userListFromAPI);
+            const usernameList = usersWithoutLoggedInUser.map(user => user.username)
+            setUserList(usernameList);
         }
         console.log(resp);
     }
