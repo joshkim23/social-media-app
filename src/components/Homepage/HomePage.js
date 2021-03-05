@@ -132,7 +132,7 @@ const HomePage = ({username, loggedInUserID, firstName, signOut, navigateToUserP
             <Header 
                 username={username}
                 signOut = {signOut}
-                handleUserProfileClick={handleUsernameClicked}
+                navigateToUserProfile={handleUsernameClicked}
             />
 
             <div style={styles.layout}>

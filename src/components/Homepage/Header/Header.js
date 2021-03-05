@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Header  = ({username, signOut}) => {
+const Header  = ({username, signOut, navigateToUserProfile}) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -41,7 +41,11 @@ const Header  = ({username, signOut}) => {
       setAnchorEl(null);
     };
 
-    // const handleSignOut = () => signOut();
+    function handleNavigateToProfile() {
+        handleClose();
+        navigateToUserProfile(username);
+    }
+
 
     return (
         <div className={classes.root}>
@@ -55,7 +59,14 @@ const Header  = ({username, signOut}) => {
                   </div>
 
                   <div style={{justifySelf: 'end', alignContent: 'center'}}>
-                      <Button style={{textTransform: 'none'}} color="inherit" aria-label="menu" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                      <Button 
+                        style={{textTransform: 'none'}} 
+                        color="inherit" 
+                        aria-label="menu" 
+                        aria-controls="simple-menu" 
+                        aria-haspopup="true" 
+                        onClick={handleClick}
+                      >
                         <AccountCircle style={{marginRight: '2px'}}/>
                           {username}
                         <ArrowDropDownIcon style={{marginLeft: '8px'}}/>
@@ -70,7 +81,7 @@ const Header  = ({username, signOut}) => {
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
                     >
-                        <MenuItem component={Link} to={`/profile/${username}`} onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem component={Link} to={`/profile/${username}`} onClick={handleNavigateToProfile}>Profile</MenuItem>
                         <MenuItem component={Link} to={`/${username}/info`} onClick={handleClose}>Account</MenuItem>
                         <MenuItem component={Link} to={'/statistics'} onClick={handleClose}>App Stats</MenuItem>
                         <MenuItem component={Link} to={'/'} onClick={() => signOut()}>Logout</MenuItem>
