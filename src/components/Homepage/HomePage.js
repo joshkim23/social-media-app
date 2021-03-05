@@ -8,7 +8,7 @@ import { Typography } from '@material-ui/core';
 import indigo from '@material-ui/core/colors/indigo';
 import Box from '@material-ui/core/Box'
 
-const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
+const HomePage = ({username, loggedInUserID, firstName, signOut, navigateToUserProfile}) => {
     const styles = {
         overlay: { // need this to make the div FULL screen!!
             backgroundColor: `${indigo["50"]}`,
@@ -116,12 +116,23 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
         }
     }
 
+    const handleUsernameClicked = (selectedUsername) => {
+        if(selectedUsername === username) {
+            navigateToUserProfile(loggedInUserID)
+        } else {
+            const clickedUser = users.find(user => user.username === selectedUsername);
+            const clickedUserID = clickedUser._id;
+            navigateToUserProfile(clickedUserID);
+        }
+    }
+
 
     return (
         <div style={styles.overlay}>
             <Header 
                 username={username}
                 signOut = {signOut}
+                handleUserProfileClick={handleUsernameClicked}
             />
 
             <div style={styles.layout}>
@@ -130,6 +141,7 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
                         userList={userList}
                         handleSearchForUser={handleUserSearch}
                         handleChatClick={handleUserChat}
+                        handleUserProfileClick={handleUsernameClicked}
                     />
                 </Box>
 
@@ -152,6 +164,7 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
                                         likes={post.likes}
                                         comments={post.comments}
                                         date={post.createdAt} 
+                                        handleNavigateToUser={handleUsernameClicked}
                                     />
                                 </div>
                             )

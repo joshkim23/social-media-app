@@ -41,7 +41,7 @@ const Header  = ({username, signOut}) => {
       setAnchorEl(null);
     };
 
-    const handleSignOut = () => signOut();
+    // const handleSignOut = () => signOut();
 
     return (
         <div className={classes.root}>
@@ -49,32 +49,32 @@ const Header  = ({username, signOut}) => {
                 <Toolbar className={classes.horizontalStretch}>
 
                   <div>
-                    <Typography variant="h4" className={classes.title}>
-                      Social Media App
-                    </Typography>
+                      <Button component={Link} to ={'/home'} color="inherit" variant='outlined' className={classes.title}>
+                        Social Media App
+                      </Button>
                   </div>
 
                   <div style={{justifySelf: 'end', alignContent: 'center'}}>
-                    <Button style={{textTransform: 'none'}} color="inherit" aria-label="menu" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-                      <AccountCircle style={{marginRight: '2px'}}/>
-                      {username}
-                      <ArrowDropDownIcon style={{marginLeft: '8px'}}/>
-                    </Button>
-                    <Menu
-                      id="simple-menu"
-                      anchorEl={anchorEl}
-                      getContentAnchorEl={null}
-                      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                      transformOrigin={{ vertical: "top", horizontal: "center" }}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
+                      <Button style={{textTransform: 'none'}} color="inherit" aria-label="menu" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                        <AccountCircle style={{marginRight: '2px'}}/>
+                          {username}
+                        <ArrowDropDownIcon style={{marginLeft: '8px'}}/>
+                      </Button>
+                      <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEl}
+                        getContentAnchorEl={null}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                        transformOrigin={{ vertical: "top", horizontal: "center" }}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
                     >
-                      <MenuItem component={Link} to={`/${username}`} onClick={handleClose}>Profile</MenuItem>
-                      <MenuItem component={Link} to={`/${username}/info`} onClick={handleClose}>Account</MenuItem>
-                      <MenuItem component={Link} to={'/statistics'} onClick={handleClose}>App Stats</MenuItem>
-                      <MenuItem component={Link} to={'/'} onClick={handleSignOut}>Logout</MenuItem>
-                    </Menu>
+                        <MenuItem component={Link} to={`/profile/${username}`} onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem component={Link} to={`/${username}/info`} onClick={handleClose}>Account</MenuItem>
+                        <MenuItem component={Link} to={'/statistics'} onClick={handleClose}>App Stats</MenuItem>
+                        <MenuItem component={Link} to={'/'} onClick={() => signOut()}>Logout</MenuItem>
+                      </Menu>
                   </div>
                   
                 </Toolbar>

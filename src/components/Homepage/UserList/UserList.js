@@ -4,7 +4,7 @@ import UserListItem from './UserListItem.js';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography'
 
-const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
+const UserList = ({userList, handleSearchForUser, handleChatClick, handleUserProfileClick}) => {
 
     const styles = {
         mainContainer: {
@@ -42,6 +42,7 @@ const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
                                 key = {index}
                                 username = {user}
                                 handleUserChatClick = {handleChatClick}
+                                handleProfileClick = {handleUserProfileClick}
                             />
                         </div>
                     )

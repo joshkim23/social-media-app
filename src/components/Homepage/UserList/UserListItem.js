@@ -5,7 +5,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from '@material-ui/core/Button';
 import indigo from '@material-ui/core/colors/indigo'
 
-const UserListItem = ({username, handleUserChatClick}) => {
+const UserListItem = ({username, handleUserChatClick, handleProfileClick}) => {
     const styles = {
         container: {
             height: '50px',
@@ -22,6 +22,8 @@ const UserListItem = ({username, handleUserChatClick}) => {
             alignItems: 'center'
         }
     }
+    const navigateToProfile = (clickedUsername) => handleProfileClick(clickedUsername); 
+
     return (
         <div style={styles.container}>
             <div style={styles.profilePicAndUsername}>
@@ -29,8 +31,9 @@ const UserListItem = ({username, handleUserChatClick}) => {
 
                 <Button
                     component={Link}
-                    to={`/${username}`}
+                    to={`/profile/${username}`}
                     style={{justifyContent: 'start', textTransform: 'none'}}
+                    onClick={() => navigateToProfile(username)}
                 >
                     {username}
                 </Button>
