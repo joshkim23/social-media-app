@@ -111,7 +111,7 @@ export const getUser = async (req, res) => {
                             _id: doc._id,
                             postedByID: doc.postedByID,
                             message: doc.message,
-                            likes: doc.likes,
+                            likes: doc.likes.length,
                             comments: doc.comments.length,
                             createdAt: doc.createdAt
                         }
@@ -246,6 +246,7 @@ export const lookUpPost = async (req, res) => {
     }
 }
 
+// Posts sent to the UI only have the number of likes and comments, but the actual post document will have an array of id's for the user and comment doc respectively
 export const getAllPosts = async (req, res) => {
     Post.find({}, async (err, docs) => {
         if(err) {
@@ -260,7 +261,7 @@ export const getAllPosts = async (req, res) => {
                 const username = await getUsernameById(doc.postedByID)
                 return {
                     _id: doc._id,
-                    likes: doc.likes,
+                    likes: doc.likes.length,
                     message: doc.message,
                     postedByID: doc.postedByID,
                     postedBy: username,
@@ -307,4 +308,26 @@ export const getAllUsers = async (req, res) => {
     } catch (err) {
         res.send(err);
     }   
+}
+
+export const resetPostCommentLikes = async (req, res) => {
+    try {
+        Post.find({}, (err, postDocs) => {
+            const oldPostDocuments = JSON.parse(JSON.stringify(postDocs));
+            oldPostDocuments.forEach(async postDoc => {
+                await Post.findByIdAndUpdate(postDoc._id, {likes: [], comments: []}, null, (err, doc) => {
+                    if(err) {
+                        res.send({message: 'failed to update post likes to an array'})
+                    } else {
+                        console.log('post likes updated')
+                    }
+                })
+            })
+            res.send({message: 'success!', newPostDocuments: oldPostDocuments})
+        })
+
+
+    } catch (error) {
+        res.send(error)
+    }
 }
