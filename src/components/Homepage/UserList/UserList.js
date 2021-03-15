@@ -24,7 +24,6 @@ const UserList = ({userList, handleSearchForUser, handleChatClick, handleUserPro
 
     const searchInputChanged = (input) => handleSearchForUser(input);
 
-
     return (
         <div style={styles.mainContainer}>
             <Typography variant="h6" style={{paddingBottom:'5px'}}>
@@ -40,7 +39,8 @@ const UserList = ({userList, handleSearchForUser, handleChatClick, handleUserPro
                         <div style={styles.userContainer} key={index}>
                             <UserListItem 
                                 key = {index}
-                                username = {user}
+                                username = {user.username}
+                                _id = {user._id}
                                 handleUserChatClick = {handleChatClick}
                                 handleProfileClick = {handleUserProfileClick}
                             />

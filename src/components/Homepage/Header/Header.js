@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Header  = ({username, signOut, navigateToUserProfile}) => {
+const Header  = ({username, loggedInUserID, signOut, navigateToUserProfile}) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -43,7 +43,7 @@ const Header  = ({username, signOut, navigateToUserProfile}) => {
 
     function handleNavigateToProfile() {
         handleClose();
-        navigateToUserProfile(username);
+        navigateToUserProfile(loggedInUserID);
     }
 
 

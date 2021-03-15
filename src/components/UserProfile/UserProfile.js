@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Post from '../Post.js';
 
@@ -10,9 +10,8 @@ import indigo from '@material-ui/core/colors/indigo';
 import { Typography } from '@material-ui/core';
 
 
-const UserProfile = ({loggedInUsername, signOut, _id, firstName, lastName, city, username, posts, handleNavigateToUser}) => {
+const UserProfile = ({loggedInUsername, loggedInUserID, signOut, _id, firstName, lastName, city, username, posts, handleNavigateToUser}) => {
     const userPosts = posts;
-    console.log(userPosts);
     const styles = {
         overlay: {
             backgroundColor: `${indigo["50"]}`,
@@ -75,13 +74,20 @@ const UserProfile = ({loggedInUsername, signOut, _id, firstName, lastName, city,
         }
     }
 
-    const handleUsernameClicked = () => handleNavigateToUser(_id);
+    // local storage on profile as well
+    // useEffect(() => {
+    //     const loggedInUser = localStorage.getItem('')
+    // })
+
+    const handleUsernameClicked = (id) => handleNavigateToUser(id);
 
     return (
         <div style={styles.overlay}>
             <Header 
                 username={loggedInUsername}
+                loggedInUserID={loggedInUserID}
                 signOut = {signOut}
+                navigateToUserProfile = {handleUsernameClicked}
             />
             <div style={styles.layout}> 
                 <div style={styles.userDataColumn}>
@@ -112,6 +118,9 @@ const UserProfile = ({loggedInUsername, signOut, _id, firstName, lastName, city,
                         </div>
                         <div>
                             posts: {posts.length}
+                        </div>
+                        <div>
+                            systemID: {_id}
                         </div>
                     </Box>
                 </div>
