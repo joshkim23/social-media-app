@@ -7,7 +7,8 @@ import {authenticateAndGetUser,
         createNewComment,
         getAllPosts,
         getAllUsers,
-        resetPostCommentLikes } from '../controllers/mongoDBStore.js';
+        resetPostCommentLikes,
+        likePostOrComment } from '../controllers/mongoDBStore.js';
 
 const router = express.Router();
 
@@ -27,7 +28,9 @@ router.get('/all', getAllUsers)
 
 router.post('/post/:id', createNewComment);
 
-router.get('/updateLikes', resetPostCommentLikes)
+router.get('/resetLikesAndComments', resetPostCommentLikes);
+
+router.post('/likePostOrComment', likePostOrComment)
 
 export default router;
 

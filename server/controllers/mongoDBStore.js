@@ -166,7 +166,8 @@ export const createNewPost = async (req, res) => {
 
 export const createNewComment = async (req, res) => {
     const postID = req.params.id;
-    const { postedByID, message, likes } = req.body;
+    const { postedByID, message } = req.body;
+    const likes = [];
 
     const newComment = new Comment({postedByID, postID, message, likes});
     try {
@@ -203,6 +204,7 @@ export const lookUpPost = async (req, res) => {
             } else {
                 const post = JSON.parse(JSON.stringify(doc));
                 let postWithComments = {
+                    postID: post._id,
                     postedByID: post.postedByID,
                     message: post.message,
                     likes: post.likes,
@@ -219,6 +221,7 @@ export const lookUpPost = async (req, res) => {
                             
                             const username = await getUsernameById(doc.postedByID)
                             return {
+                                commentID: doc._id,
                                 postedByID: doc.postedByID,
                                 postedByName: username,
                                 postID: doc.postID,
@@ -310,6 +313,7 @@ export const getAllUsers = async (req, res) => {
     }   
 }
 
+// UTILITY FUNCTION ONLY - resets database likes and comments to be empty arrays
 export const resetPostCommentLikes = async (req, res) => {
     try {
         Post.find({}, (err, postDocs) => {
@@ -329,5 +333,66 @@ export const resetPostCommentLikes = async (req, res) => {
 
     } catch (error) {
         res.send(error)
+    }
+}
+
+// Handles like/unlike requests, grabs document and then checks if user liked it already, adjusts likes array accordingly
+export const likePostOrComment = async (req, res) => {
+    const { docID, userID, docType } = req.body;
+
+    try{
+        if(docType === 'post') {
+            Post.findById(docID, (err, doc) => {
+                if(err) {
+                    res.send({message: 'failed to find post', error: err});
+                } else {
+                    const post = JSON.parse(JSON.stringify(doc));
+                    
+                    //if the post likes array already has their userID, remove it, otherwise push it to the array and update the post document
+                    if(!post.likes.includes(userID)) {
+                        post.likes.push(userID);
+                    } else {
+                        post.likes = post.likes.filter(likedByID => likedByID !== userID)
+                    }
+                    Post.findByIdAndUpdate(docID, {likes: post.likes}, null, (err, doc) => {
+                        if(err) {
+                            res.send({message: 'failed to update post likes', error: err})
+                        } else {
+                            res.send({
+                                success: true,
+                                message: 'successfully liked/unliked post',
+                                oldPostDoc: doc
+                            })
+                        }
+                    })
+                }
+            })
+        } else if (docType === 'comment') {
+            Comment.findById(docID, (err, doc) => {
+                if(err) {
+                    res.send({message: 'failed to find comment', error: err})
+                } else {
+                    const comment = JSON.parse(JSON.stringify(doc));
+                    if(!comment.likes.includes(userID)) {
+                        comment.likes.push(userID);
+                    } else {
+                        comment.likes = comment.likes.filter(likedByID => likedByID !== userID);
+                    }
+                    Comment.findByIdAndUpdate(docID, {likes: comment.likes}, null, (err, doc) => {
+                        if(err) {
+                            res.send({message: 'failed to update comment likes', error: err})
+                        } else {
+                            res.send({
+                                success: true, 
+                                message: 'successfully liked/unliked comment',
+                                oldCommentDoc: doc
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    } catch (err) {
+        res.send(err);
     }
 }
