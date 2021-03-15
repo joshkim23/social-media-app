@@ -4,11 +4,10 @@ import UserList from './UserList/UserList.js';
 import Post from '../Post.js';
 import NewPost from './NewPost.js';
 import { getUsers, getPosts, submitPost } from '../../apiCallFunctions.js';
-import { Typography } from '@material-ui/core';
 import indigo from '@material-ui/core/colors/indigo';
 import Box from '@material-ui/core/Box'
 
-const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
+const HomePage = ({username, loggedInUserID, firstName, signOut, navigateToUserProfile}) => {
     const styles = {
         overlay: { // need this to make the div FULL screen!!
             backgroundColor: `${indigo["50"]}`,
@@ -61,7 +60,7 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
     }
 
     const [users, setUsers] = useState([]); // stores all users grabbed from the database - includes general information 
-    const [userList, setUserList] = useState([]); //stores the list of usernames sent to the usersList component - changes upon search input
+    const [userList, setUserList] = useState([]); //stores the list of users sent to the usersList component - changes upon search input
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
@@ -74,9 +73,7 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
         if (resp.success) {
             const usersWithoutLoggedInUser = resp.users.filter(user => user.username !== username);
             setUsers(usersWithoutLoggedInUser);
-
-            const usernameList = usersWithoutLoggedInUser.map(user => user.username)
-            setUserList(usernameList);
+            setUserList(usersWithoutLoggedInUser)
         }
         console.log(resp);
     }
@@ -92,9 +89,9 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
 
     function handleUserSearch(input) {
         if(input === '') {
-            setUserList(users.map(user => user.username));
+            setUserList(users);
         } else {
-            const filteredUsers = users.filter(user => user.username.toLowerCase().slice(0, input.length) === input).map(user => user.username); //after you filter the results, it returns the whole array index for the user which includes everything from the api, not just the usernames. need to map the results to grab the usernames
+            const filteredUsers = users.filter(user => user.username.toLowerCase().slice(0, input.length) === input); //after you filter the results, it returns the whole array index for the user which includes everything from the api, not just the usernames. need to map the results to grab the usernames
             console.log(filteredUsers);
             setUserList(filteredUsers);
         }
@@ -116,12 +113,25 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
         }
     }
 
+    const handleUsernameClicked = (id) => {
+        console.log('id clicked: ', id)
+        if(id === loggedInUserID) {
+            navigateToUserProfile(loggedInUserID)
+        } else {
+            const clickedUser = users.find(user => user._id === id);
+            const clickedUserID = clickedUser._id;
+            navigateToUserProfile(clickedUserID);
+        }
+    }
+
 
     return (
         <div style={styles.overlay}>
             <Header 
                 username={username}
+                loggedInUserID={loggedInUserID}
                 signOut = {signOut}
+                navigateToUserProfile={handleUsernameClicked}
             />
 
             <div style={styles.layout}>
@@ -130,6 +140,7 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
                         userList={userList}
                         handleSearchForUser={handleUserSearch}
                         handleChatClick={handleUserChat}
+                        handleUserProfileClick={handleUsernameClicked}
                     />
                 </Box>
 
@@ -148,10 +159,12 @@ const HomePage = ({username, loggedInUserID, firstName, signOut}) => {
                                     <Post 
                                         key={index}
                                         username={post.postedBy}
+                                        postedByID={post.postedByID}
                                         message={post.message}
                                         likes={post.likes}
                                         comments={post.comments}
                                         date={post.createdAt} 
+                                        handleNavigateToUser={handleUsernameClicked}
                                     />
                                 </div>
                             )

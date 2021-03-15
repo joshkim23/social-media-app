@@ -10,7 +10,7 @@ export const getUsernameById = async (id) => {
         if(err) return err;
     })
     const user = JSON.parse(JSON.stringify(userDoc));
-    console.log(`found username for the user with id: ${id}: ${user.username}`);
+    // console.log(`found username for the user with id: ${id}: ${user.username}`);
     return user.username;
 }
 

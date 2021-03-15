@@ -64,3 +64,12 @@ export const submitPost = (message, loggedInUserID) => {
     .then(data => JSON.parse(JSON.stringify(data)))
     .catch(error => error);
 }
+
+export const getUser = (_id) => {
+    console.log(`attempting to FETCH the user with id: ${_id}`)
+    return fetch(`${ENDPOINT}/lookupUser/${_id}`, {
+        method: 'GET'
+    }).then(res => res.json())
+    .then(data => JSON.parse(JSON.stringify(data)))
+    .catch(error => error);
+}

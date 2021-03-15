@@ -14,7 +14,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 
 
 
-const Post = ({ username, message, likes, comments, date }) => {
+const Post = ({ username, postedByID, message, likes, comments, date, handleNavigateToUser }) => {
     const styles = {
         mainContainer: {
             display: 'grid',
@@ -49,7 +49,12 @@ const Post = ({ username, message, likes, comments, date }) => {
             <div style={styles.usernameAndDate}>
                 <Typography style={{color: 'black', display: 'flex', fontSize: '14px', alignItems: 'center'}}>
                     <AccountCircle style={{paddingRight: '0px', color: `${indigo["200"]}`}} />
-                    <Button component={Link} to={`/${username}`} style={{textDecoration: 'underline', textTransform: 'none'}}>
+                    <Button 
+                        component={Link}  
+                        to={`/profile/${username}`} 
+                        style={{textDecoration: 'underline', textTransform: 'none'}} 
+                        onClick={()=> handleNavigateToUser(postedByID)}
+                    >
                         {username}
                     </Button>
                 </Typography>

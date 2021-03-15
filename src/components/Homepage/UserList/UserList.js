@@ -1,10 +1,9 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import UserListItem from './UserListItem.js';
-import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography'
 
-const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
+const UserList = ({userList, handleSearchForUser, handleChatClick, handleUserProfileClick}) => {
 
     const styles = {
         mainContainer: {
@@ -24,7 +23,6 @@ const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
 
     const searchInputChanged = (input) => handleSearchForUser(input);
 
-
     return (
         <div style={styles.mainContainer}>
             <Typography variant="h6" style={{paddingBottom:'5px'}}>
@@ -40,8 +38,10 @@ const UserList = ({userList, handleSearchForUser, handleChatClick}) => {
                         <div style={styles.userContainer} key={index}>
                             <UserListItem 
                                 key = {index}
-                                username = {user}
+                                username = {user.username}
+                                _id = {user._id}
                                 handleUserChatClick = {handleChatClick}
+                                handleProfileClick = {handleUserProfileClick}
                             />
                         </div>
                     )

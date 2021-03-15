@@ -110,7 +110,7 @@ export const getUser = async (req, res) => {
                         return {
                             _id: doc._id,
                             postedByID: doc.postedByID,
-                            message: doc.postedByID,
+                            message: doc.message,
                             likes: doc.likes,
                             comments: doc.comments.length,
                             createdAt: doc.createdAt
