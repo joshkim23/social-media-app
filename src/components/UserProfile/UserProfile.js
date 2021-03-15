@@ -11,7 +11,6 @@ import { Typography } from '@material-ui/core';
 
 
 const UserProfile = ({loggedInUsername, loggedInUserID, signOut, _id, firstName, lastName, city, username, posts, handleNavigateToUser}) => {
-    const userPosts = posts;
     const styles = {
         overlay: {
             backgroundColor: `${indigo["50"]}`,
@@ -73,12 +72,7 @@ const UserProfile = ({loggedInUsername, loggedInUserID, signOut, _id, firstName,
             overflow: 'auto'
         }
     }
-
-    // local storage on profile as well
-    // useEffect(() => {
-    //     const loggedInUser = localStorage.getItem('')
-    // })
-
+    
     const handleUsernameClicked = (id) => handleNavigateToUser(id);
 
     return (

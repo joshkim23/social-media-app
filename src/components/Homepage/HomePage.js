@@ -4,7 +4,6 @@ import UserList from './UserList/UserList.js';
 import Post from '../Post.js';
 import NewPost from './NewPost.js';
 import { getUsers, getPosts, submitPost } from '../../apiCallFunctions.js';
-import { Typography } from '@material-ui/core';
 import indigo from '@material-ui/core/colors/indigo';
 import Box from '@material-ui/core/Box'
 

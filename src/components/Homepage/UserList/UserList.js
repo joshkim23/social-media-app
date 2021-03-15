@@ -1,7 +1,6 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import UserListItem from './UserListItem.js';
-import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography'
 
 const UserList = ({userList, handleSearchForUser, handleChatClick, handleUserProfileClick}) => {

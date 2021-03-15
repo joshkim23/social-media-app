@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {Route, BrowserRouter as Router} from 'react-router-dom';
-import { Redirect } from 'react-router-dom';
 
 import SignIn from './components/SignIn/SignIn.js';
 import HomePage from './components/Homepage/HomePage.js';
@@ -44,6 +43,12 @@ const App = () => {
             setLoggedInUserID(JSON.parse(loggedInUser)._id)
             setUserLookUp(JSON.parse(loggedInUser));
         } 
+
+        const preRefreshUserLookUp = localStorage.getItem('userLookUp');
+        console.log('user look up grabbed from local storage: ', JSON.parse(preRefreshUserLookUp));
+        if(preRefreshUserLookUp) {
+            setUserLookUp(JSON.parse(preRefreshUserLookUp));
+        }
     },[]);
 
     const handleSignOut = () => {
@@ -53,14 +58,16 @@ const App = () => {
     }
 
     async function handleGrabUserProfile(_id) {
-        console.log('request to route to user with id', _id)
-        // if(userLookUp._id !== _id) {
+        if(userLookUp._id !== _id) {
+            console.log('request to route to user with id', _id)
+
             const resp = await getUser(_id);
             if(resp.success) {
                 console.log('setting user look up: ', resp.userData);
                 setUserLookUp(resp.userData);
+                localStorage.setItem('userLookUp', JSON.stringify(resp.userData)); // so if the user refreshes while on a profile, it stores the data of the user that was clicked and doesn't render empty divs
             }
-        // }
+        }
     }
 
     return (

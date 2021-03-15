@@ -22,7 +22,6 @@ const UserListItem = ({username, _id, handleUserChatClick, handleProfileClick}) 
             alignItems: 'center'
         }
     }
-    // const navigateToProfile = () => handleProfileClick(_id); 
 
     return (
         <div style={styles.container}>
